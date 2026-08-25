@@ -12,7 +12,7 @@
     <section id="login-view" class="login-card">
       <div class="logo">💬</div>
       <h1>Privater Chat</h1>
-      <p class="subtitle">Melde dich mit deinem Konto an.</p>
+      <p class="subtitle">Melde dich mit deinem freigeschalteten Konto an.</p>
 
       <form id="login-form" class="login-form">
         <label for="email">E-Mail-Adresse</label>
@@ -22,41 +22,7 @@
         <input id="password" type="password" autocomplete="current-password" minlength="6" required>
 
         <button class="primary-button" type="submit">Anmelden</button>
-        <button id="show-register-button" class="secondary-button" type="button">Neues Konto erstellen</button>
         <p id="login-error" class="error-message" role="alert"></p>
-      </form>
-    </section>
-
-    <section id="register-view" class="login-card" hidden>
-      <div class="logo">✉️</div>
-      <h1>Konto erstellen</h1>
-      <p class="subtitle">Du benötigst danach den privaten Einladungscode.</p>
-
-      <form id="register-form" class="login-form">
-        <label for="register-email">E-Mail-Adresse</label>
-        <input id="register-email" type="email" autocomplete="email" required>
-
-        <label for="register-password">Passwort</label>
-        <input id="register-password" type="password" autocomplete="new-password" minlength="6" required>
-
-        <button class="primary-button" type="submit">Registrieren</button>
-        <button id="show-login-button" class="secondary-button" type="button">Zur Anmeldung</button>
-        <p id="register-error" class="error-message" role="alert"></p>
-      </form>
-    </section>
-
-    <section id="invite-view" class="login-card" hidden>
-      <div class="logo">🔐</div>
-      <h1>Einladungscode</h1>
-      <p class="subtitle">Gib den privaten Code ein, um dem Chat beizutreten.</p>
-
-      <form id="invite-form" class="login-form">
-        <label for="invite-code">Einladungscode</label>
-        <input id="invite-code" type="text" autocomplete="off" required>
-
-        <button class="primary-button" type="submit">Chat beitreten</button>
-        <button id="invite-logout-button" class="secondary-button" type="button">Abmelden</button>
-        <p id="invite-error" class="error-message" role="alert"></p>
       </form>
     </section>
 
@@ -75,7 +41,14 @@
 
       <form id="message-form" class="input-area">
         <label class="sr-only" for="input">Nachricht</label>
-        <input id="input" type="text" placeholder="Nachricht schreiben..." autocomplete="off" maxlength="500" required>
+        <input
+          id="input"
+          type="text"
+          placeholder="Nachricht schreiben..."
+          autocomplete="off"
+          maxlength="500"
+          required
+        >
         <button class="send-button" type="submit">Senden</button>
       </form>
     </section>
