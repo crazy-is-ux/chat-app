@@ -93,6 +93,16 @@ button {
   background: #0d9488;
 }
 
+.secondary-button {
+  padding: 10px;
+  background: transparent;
+  color: #5eead4;
+}
+
+.secondary-button:hover {
+  background: rgb(20 184 166 / 10%);
+}
+
 .error-message {
   min-height: 20px;
   margin: 4px 0 0;
