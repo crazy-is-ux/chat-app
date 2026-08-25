@@ -2,19 +2,37 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mini Chat</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <main class="chat-app">
+    <header class="chat-header">
+      <div>
+        <h1>Mini Chat</h1>
+        <p><span class="status-dot"></span> Lokal verfügbar</p>
+      </div>
+      <button id="clear-button" class="clear-button" type="button">Chat löschen</button>
+    </header>
 
-  <div class="chat">
-    <div id="messages"></div>
-  </div>
+    <section id="messages" class="messages" aria-live="polite">
+      <p id="empty-state" class="empty-state">Noch keine Nachrichten. Schreib etwas!</p>
+    </section>
 
-  <div class="input-area">
-    <input id="input" placeholder="Nachricht schreiben...">
-    <button onclick="sendMessage()">Senden</button>
-  </div>
+    <form id="message-form" class="input-area">
+      <label class="sr-only" for="input">Nachricht</label>
+      <input
+        id="input"
+        type="text"
+        placeholder="Nachricht schreiben..."
+        autocomplete="off"
+        maxlength="500"
+        required
+      >
+      <button class="send-button" type="submit">Senden</button>
+    </form>
+  </main>
 
   <script src="script.js"></script>
 </body>
