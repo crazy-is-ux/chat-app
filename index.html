@@ -2,58 +2,105 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#111827">
-  <title>Privater Chat</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#080d19">
+  <title>NEXA Chat</title>
+  <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
-  <main class="app-shell">
-    <section id="login-view" class="login-card">
-      <div class="logo">💬</div>
-      <h1>Privater Chat</h1>
-      <p class="subtitle">Melde dich mit deinem freigeschalteten Konto an.</p>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
 
-      <form id="login-form" class="login-form">
+  <main class="app-shell">
+    <section id="login-view" class="auth-card">
+      <div class="brand-mark" aria-hidden="true">N</div>
+      <p class="eyebrow">PRIVATE MESSAGING</p>
+      <h1>Willkommen bei NEXA</h1>
+      <p class="subtitle">Ein privater Raum für eure Gespräche.</p>
+
+      <form id="login-form" class="auth-form">
         <label for="email">E-Mail-Adresse</label>
-        <input id="email" type="email" autocomplete="email" required>
+        <input id="email" type="email" autocomplete="email" placeholder="name@beispiel.de" required>
 
         <label for="password">Passwort</label>
-        <input id="password" type="password" autocomplete="current-password" minlength="6" required>
+        <input id="password" type="password" autocomplete="current-password" placeholder="Dein Passwort" minlength="6" required>
 
-        <button class="primary-button" type="submit">Anmelden</button>
+        <button class="primary-button" type="submit">
+          <span>Anmelden</span>
+          <span aria-hidden="true">→</span>
+        </button>
         <p id="login-error" class="error-message" role="alert"></p>
+      </form>
+
+      <p class="privacy-note"><span aria-hidden="true">🔒</span> Zugang nur für freigeschaltete Konten</p>
+    </section>
+
+    <section id="username-view" class="auth-card" hidden>
+      <div class="brand-mark small-mark" aria-hidden="true">N</div>
+      <p class="eyebrow">DEIN PROFIL</p>
+      <h1>Wie sollen wir dich nennen?</h1>
+      <p class="subtitle">Dieser Name wird im Chat angezeigt. Deine E-Mail bleibt verborgen.</p>
+
+      <form id="username-form" class="auth-form">
+        <label for="username">Benutzername</label>
+        <input
+          id="username"
+          type="text"
+          autocomplete="nickname"
+          placeholder="z. B. Stefan"
+          minlength="3"
+          maxlength="20"
+          required
+        >
+
+        <button class="primary-button" type="submit">
+          <span>Chat starten</span>
+          <span aria-hidden="true">→</span>
+        </button>
+        <button id="username-logout-button" class="text-button" type="button">Mit anderem Konto anmelden</button>
+        <p id="username-error" class="error-message" role="alert"></p>
       </form>
     </section>
 
     <section id="chat-view" class="chat-app" hidden>
       <header class="chat-header">
-        <div>
-          <h1>Privater Chat</h1>
-          <p><span class="status-dot"></span><span id="user-email"></span></p>
+        <div class="profile">
+          <div id="profile-avatar" class="avatar">N</div>
+          <div class="profile-copy">
+            <h1>NEXA Chat</h1>
+            <p><span class="status-dot"></span><span id="user-name"></span></p>
+          </div>
         </div>
-        <button id="logout-button" class="logout-button" type="button">Abmelden</button>
+        <button id="logout-button" class="icon-button" type="button" aria-label="Abmelden" title="Abmelden">
+          <span aria-hidden="true">↗</span>
+        </button>
       </header>
 
       <section id="messages" class="messages" aria-live="polite">
-        <p id="empty-state" class="empty-state">Noch keine Nachrichten. Schreib etwas!</p>
+        <div id="empty-state" class="empty-state">
+          <span aria-hidden="true">✦</span>
+          <h2>Noch ganz ruhig hier</h2>
+          <p>Schreib die erste Nachricht.</p>
+        </div>
       </section>
 
-      <form id="message-form" class="input-area">
+      <form id="message-form" class="composer">
         <label class="sr-only" for="input">Nachricht</label>
         <input
           id="input"
           type="text"
-          placeholder="Nachricht schreiben..."
+          placeholder="Nachricht schreiben …"
           autocomplete="off"
           maxlength="500"
           required
         >
-        <button class="send-button" type="submit">Senden</button>
+        <button class="send-button" type="submit" aria-label="Nachricht senden">
+          <span aria-hidden="true">↑</span>
+        </button>
       </form>
     </section>
   </main>
 
-  <script type="module" src="script.js"></script>
+  <script type="module" src="script.js?v=2"></script>
 </body>
 </html>
