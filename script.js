@@ -3,7 +3,8 @@ import {
   getAuth,
   onAuthStateChanged,
   signInWithEmailAndPassword,
-  signOut
+  signOut,
+  updateProfile
 } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 import {
   addDoc,
@@ -31,12 +32,15 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 const loginView = document.getElementById("login-view");
+const usernameView = document.getElementById("username-view");
 const chatView = document.getElementById("chat-view");
 const loginForm = document.getElementById("login-form");
+const usernameForm = document.getElementById("username-form");
 const loginError = document.getElementById("login-error");
-const emailInput = document.getElementById("email");
-const passwordInput = document.getElementById("password");
-const userEmail = document.getElementById("user-email");
+const usernameError = document.getElementById("username-error");
+const usernameInput = document.getElementById("username");
+const userName = document.getElementById("user-name");
+const profileAvatar = document.getElementById("profile-avatar");
 const logoutButton = document.getElementById("logout-button");
 const messageForm = document.getElementById("message-form");
 const input = document.getElementById("input");
@@ -46,16 +50,27 @@ const emptyState = document.getElementById("empty-state");
 let currentUser = null;
 let stopListening = null;
 
+function showView(view) {
+  loginView.hidden = view !== "login";
+  usernameView.hidden = view !== "username";
+  chatView.hidden = view !== "chat";
+}
+
 function showLogin() {
-  loginView.hidden = false;
-  chatView.hidden = true;
-  emailInput.focus();
+  showView("login");
+  document.getElementById("email").focus();
+}
+
+function showUsernameSetup() {
+  showView("username");
+  usernameInput.focus();
 }
 
 function showChat(user) {
-  loginView.hidden = true;
-  chatView.hidden = false;
-  userEmail.textContent = user.email;
+  const name = user.displayName || "Nutzer";
+  userName.textContent = name;
+  profileAvatar.textContent = name.charAt(0);
+  showView("chat");
   input.focus();
 }
 
@@ -71,9 +86,7 @@ function getLoginError(code) {
 }
 
 function formatTime(timestamp) {
-  if (!timestamp) {
-    return "Jetzt";
-  }
+  if (!timestamp) return "Jetzt";
 
   return timestamp.toDate().toLocaleTimeString("de-DE", {
     hour: "2-digit",
@@ -96,20 +109,17 @@ function createMessageElement(message) {
     wrapper.classList.add("own-message");
     sender.textContent = "Du";
   } else {
-    sender.textContent = message.senderEmail || "Freund";
+    sender.textContent = message.senderName || "Nutzer";
   }
 
   text.textContent = message.text;
   time.textContent = formatTime(message.createdAt);
   wrapper.append(sender, text, time);
-
   return wrapper;
 }
 
 function listenForMessages() {
-  if (stopListening) {
-    stopListening();
-  }
+  if (stopListening) stopListening();
 
   const messagesQuery = query(
     collection(db, "messages"),
@@ -123,15 +133,16 @@ function listenForMessages() {
       messages.querySelectorAll(".message").forEach((message) => message.remove());
       emptyState.hidden = !snapshot.empty;
 
-      snapshot.forEach((document) => {
-        messages.appendChild(createMessageElement(document.data()));
+      snapshot.forEach((messageDocument) => {
+        messages.appendChild(createMessageElement(messageDocument.data()));
       });
 
       messages.scrollTop = messages.scrollHeight;
     },
     () => {
       emptyState.hidden = false;
-      emptyState.textContent = "Nachrichten konnten nicht geladen werden.";
+      emptyState.querySelector("h2").textContent = "Verbindung fehlgeschlagen";
+      emptyState.querySelector("p").textContent = "Bitte prüfe die Firebase-Regeln.";
     }
   );
 }
@@ -143,8 +154,8 @@ loginForm.addEventListener("submit", async (event) => {
   try {
     await signInWithEmailAndPassword(
       auth,
-      emailInput.value.trim(),
-      passwordInput.value
+      document.getElementById("email").value.trim(),
+      document.getElementById("password").value
     );
     loginForm.reset();
   } catch (error) {
@@ -152,13 +163,31 @@ loginForm.addEventListener("submit", async (event) => {
   }
 });
 
+usernameForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  usernameError.textContent = "";
+  const name = usernameInput.value.trim();
+
+  if (name.length < 3 || name.length > 20) {
+    usernameError.textContent = "Der Benutzername muss 3 bis 20 Zeichen haben.";
+    return;
+  }
+
+  try {
+    await updateProfile(currentUser, { displayName: name });
+    usernameForm.reset();
+    showChat(currentUser);
+    listenForMessages();
+  } catch {
+    usernameError.textContent = "Benutzername konnte nicht gespeichert werden.";
+  }
+});
+
 messageForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const text = input.value.trim();
 
-  if (!text || !currentUser) {
-    return;
-  }
+  if (!text || !currentUser?.displayName) return;
 
   input.disabled = true;
 
@@ -166,7 +195,7 @@ messageForm.addEventListener("submit", async (event) => {
     await addDoc(collection(db, "messages"), {
       text,
       senderId: currentUser.uid,
-      senderEmail: currentUser.email,
+      senderName: currentUser.displayName,
       createdAt: serverTimestamp()
     });
     messageForm.reset();
@@ -179,21 +208,27 @@ messageForm.addEventListener("submit", async (event) => {
 });
 
 logoutButton.addEventListener("click", () => signOut(auth));
+document.getElementById("username-logout-button").addEventListener("click", () => signOut(auth));
 
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
 
-  if (user) {
-    showChat(user);
-    listenForMessages();
+  if (!user) {
+    if (stopListening) {
+      stopListening();
+      stopListening = null;
+    }
+
+    messages.querySelectorAll(".message").forEach((message) => message.remove());
+    showLogin();
     return;
   }
 
-  if (stopListening) {
-    stopListening();
-    stopListening = null;
+  if (!user.displayName) {
+    showUsernameSetup();
+    return;
   }
 
-  messages.querySelectorAll(".message").forEach((message) => message.remove());
-  showLogin();
+  showChat(user);
+  listenForMessages();
 });
