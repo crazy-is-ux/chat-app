@@ -1,7 +1,9 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 import {
+  browserLocalPersistence,
   getAuth,
   onAuthStateChanged,
+  setPersistence,
   signInWithEmailAndPassword,
   signOut,
   updateProfile
@@ -30,6 +32,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const persistenceReady = setPersistence(auth, browserLocalPersistence);
 
 const loginView = document.getElementById("login-view");
 const usernameView = document.getElementById("username-view");
@@ -152,6 +155,7 @@ loginForm.addEventListener("submit", async (event) => {
   loginError.textContent = "";
 
   try {
+    await persistenceReady;
     await signInWithEmailAndPassword(
       auth,
       document.getElementById("email").value.trim(),
