@@ -3,20 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#080d19">
-  <title>NEXA Chat</title>
-  <link rel="stylesheet" href="style.css?v=4">
+  <meta name="theme-color" content="#02080d">
+  <title>JARVIS COMMS</title>
+  <link rel="stylesheet" href="style.css?v=5">
 </head>
 <body>
-  <div class="ambient ambient-one"></div>
-  <div class="ambient ambient-two"></div>
+  <div class="hud-grid" aria-hidden="true"></div>
+  <div class="scanline" aria-hidden="true"></div>
+  <div class="orbital orbital-left" aria-hidden="true"></div>
+  <div class="orbital orbital-right" aria-hidden="true"></div>
 
   <main class="app-shell">
     <section id="login-view" class="auth-card">
-      <div class="brand-mark" aria-hidden="true">N</div>
-      <p class="eyebrow">PRIVATE MESSAGING</p>
-      <h1>Willkommen bei NEXA</h1>
-      <p class="subtitle">Deine privaten Gespräche an einem Ort.</p>
+      <div class="jarvis-core" aria-hidden="true"><span>J</span></div>
+      <p class="eyebrow">SECURE COMMUNICATION LINK</p>
+      <h1>JARVIS COMMS</h1>
+      <p class="subtitle">Privater Kanal bereit. Identität bestätigen, um das System zu öffnen.</p>
 
       <form id="login-form" class="auth-form">
         <label for="email">E-Mail-Adresse</label>
@@ -26,20 +28,20 @@
         <input id="password" type="password" autocomplete="current-password" placeholder="Dein Passwort" minlength="6" required>
 
         <button class="primary-button" type="submit">
-          <span>Anmelden</span>
-          <span aria-hidden="true">→</span>
+          <span>System öffnen</span>
+          <span aria-hidden="true">›</span>
         </button>
         <p id="login-error" class="error-message" role="alert"></p>
       </form>
 
-      <p class="privacy-note"><span aria-hidden="true">🔒</span> Sicher angemeldet – auch nach dem Schließen</p>
+      <div class="system-status"><span></span> ENCRYPTED CONNECTION</div>
     </section>
 
     <section id="username-view" class="auth-card" hidden>
-      <div class="brand-mark small-mark" aria-hidden="true">N</div>
-      <p class="eyebrow">DEIN PROFIL</p>
-      <h1>Wähle deinen Namen</h1>
-      <p class="subtitle">Andere finden dich über diesen eindeutigen Benutzernamen. Deine E-Mail bleibt verborgen.</p>
+      <div class="jarvis-core compact-core" aria-hidden="true"><span>J</span></div>
+      <p class="eyebrow">IDENTITY PROTOCOL</p>
+      <h1>Codename wählen</h1>
+      <p class="subtitle">Andere finden dich nur über diesen Namen. Deine E-Mail bleibt verborgen.</p>
 
       <form id="username-form" class="auth-form">
         <label for="username">Benutzername</label>
@@ -56,10 +58,10 @@
         <p class="input-hint">3–20 Zeichen: Buchstaben, Zahlen, Punkt, _ oder -</p>
 
         <button class="primary-button" type="submit">
-          <span>Profil erstellen</span>
-          <span aria-hidden="true">→</span>
+          <span>Identität speichern</span>
+          <span aria-hidden="true">›</span>
         </button>
-        <button id="username-logout-button" class="text-button" type="button">Mit anderem Konto anmelden</button>
+        <button id="username-logout-button" class="text-button" type="button">Anderes Konto verwenden</button>
         <p id="username-error" class="error-message" role="alert"></p>
       </form>
     </section>
@@ -67,32 +69,35 @@
     <section id="inbox-view" class="main-app" hidden>
       <header class="topbar">
         <div class="profile">
-          <div id="inbox-avatar" class="avatar">N</div>
+          <div id="inbox-avatar" class="avatar">J</div>
           <div class="profile-copy">
-            <p class="micro-label">ANGEMELDET ALS</p>
+            <p class="micro-label">JARVIS // OPERATOR</p>
             <h1 id="inbox-username">Nutzer</h1>
           </div>
         </div>
-        <button id="logout-button" class="icon-button" type="button" aria-label="Abmelden" title="Abmelden">
-          <span aria-hidden="true">↗</span>
-        </button>
+        <div class="topbar-actions">
+          <span class="live-status"><i></i> ONLINE</span>
+          <button id="logout-button" class="icon-button" type="button" aria-label="Abmelden" title="Abmelden">
+            <span aria-hidden="true">↗</span>
+          </button>
+        </div>
       </header>
 
       <div class="inbox-content">
         <div class="section-heading">
           <div>
-            <p class="eyebrow">NACHRICHTEN</p>
-            <h2>Chats</h2>
+            <p class="eyebrow">COMMUNICATION ARRAY</p>
+            <h2>Verbindungen</h2>
           </div>
           <button id="new-chat-button" class="new-chat-button" type="button">
             <span aria-hidden="true">＋</span>
-            <span>Neuer Chat</span>
+            <span>Neuer Kanal</span>
           </button>
         </div>
 
         <section id="new-chat-panel" class="new-chat-panel" hidden>
           <form id="contact-search-form">
-            <label for="contact-username">Benutzername deines Kontakts</label>
+            <label for="contact-username">Operator suchen</label>
             <div class="search-row">
               <input
                 id="contact-username"
@@ -102,7 +107,7 @@
                 maxlength="20"
                 required
               >
-              <button class="search-button" type="submit" aria-label="Kontakt suchen">→</button>
+              <button class="search-button" type="submit" aria-label="Kontakt suchen">›</button>
             </div>
             <p id="contact-search-error" class="error-message compact-error" role="alert"></p>
           </form>
@@ -111,9 +116,9 @@
         <div id="chat-list" class="chat-list" aria-live="polite"></div>
 
         <div id="empty-chats" class="empty-list">
-          <span aria-hidden="true">✦</span>
-          <h3>Noch keine Chats</h3>
-          <p>Starte einen Chat über den Benutzernamen deines Freundes.</p>
+          <div class="radar-core" aria-hidden="true"><span></span></div>
+          <h3>Kein Kanal aktiv</h3>
+          <p>Suche den Benutzernamen deines Freundes und starte eine private Verbindung.</p>
         </div>
       </div>
     </section>
@@ -121,13 +126,14 @@
     <section id="chat-view" class="main-app chat-room" hidden>
       <header class="topbar chat-room-header">
         <button id="back-button" class="icon-button back-button" type="button" aria-label="Zurück zur Chatliste">
-          <span aria-hidden="true">←</span>
+          <span aria-hidden="true">‹</span>
         </button>
         <div class="profile contact-profile">
-          <div id="contact-avatar" class="avatar contact-avatar">N</div>
+          <div id="contact-avatar" class="avatar contact-avatar">J</div>
           <div class="profile-copy">
+            <p class="micro-label">PRIVATE CHANNEL</p>
             <h1 id="contact-name">Kontakt</h1>
-            <p><span class="status-dot"></span>Privater Einzelchat</p>
+            <p><span class="status-dot"></span>Verbindung aktiv</p>
           </div>
         </div>
         <div class="header-spacer"></div>
@@ -135,18 +141,19 @@
 
       <section id="messages" class="messages" aria-live="polite">
         <div id="empty-messages" class="empty-state">
-          <span aria-hidden="true">✦</span>
-          <h2>Neuer Chat</h2>
-          <p>Schreib die erste Nachricht.</p>
+          <div class="radar-core small-radar" aria-hidden="true"><span></span></div>
+          <h2>Kanal geöffnet</h2>
+          <p>Übertrage die erste Nachricht.</p>
         </div>
       </section>
 
       <form id="message-form" class="composer">
         <label class="sr-only" for="message-input">Nachricht</label>
+        <span class="composer-prompt" aria-hidden="true">&gt;</span>
         <input
           id="message-input"
           type="text"
-          placeholder="Nachricht schreiben …"
+          placeholder="Nachricht übertragen …"
           autocomplete="off"
           maxlength="500"
           required
@@ -158,6 +165,6 @@
     </section>
   </main>
 
-  <script type="module" src="script.js?v=4"></script>
+  <script type="module" src="script.js?v=5"></script>
 </body>
 </html>
