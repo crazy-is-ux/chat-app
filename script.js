@@ -12,6 +12,7 @@ import {
   collection,
   doc,
   getDoc,
+  getDocs,
   getFirestore,
   limit,
   onSnapshot,
@@ -90,6 +91,77 @@ function normalizeUsername(value) {
 
 function isValidUsername(value) {
   return /^[A-Za-z0-9._-]{3,20}$/.test(value);
+}
+
+function preferredUsernameFor(user) {
+  const emailName = (user.email || "").split("@")[0].toLowerCase();
+  return /^radu(?:[._-]|\d|$)/.test(emailName) ? "tadu" : "";
+}
+
+async function syncUsernameInChats(user, username) {
+  const chatsSnapshot = await getDocs(
+    query(collection(db, "chats"), where("participants", "array-contains", user.uid))
+  );
+  const batch = writeBatch(db);
+  let hasUpdates = false;
+
+  chatsSnapshot.forEach((chatDocument) => {
+    const participantNames = chatDocument.data().participantNames || {};
+    if (participantNames[user.uid] !== username) {
+      batch.update(chatDocument.ref, {
+        participantNames: { ...participantNames, [user.uid]: username }
+      });
+      hasUpdates = true;
+    }
+  });
+
+  if (hasUpdates) await batch.commit();
+}
+
+async function renameUsername(user, rawUsername) {
+  const username = rawUsername.trim();
+  const usernameLower = normalizeUsername(username);
+  if (!isValidUsername(username)) throw new Error("invalid-username");
+
+  const userRef = doc(db, "users", user.uid);
+  const newUsernameRef = doc(db, "usernames", usernameLower);
+
+  await runTransaction(db, async (transaction) => {
+    const userSnapshot = await transaction.get(userRef);
+    if (!userSnapshot.exists()) throw new Error("profile-not-found");
+
+    const oldUsernameLower = userSnapshot.data().usernameLower;
+    if (oldUsernameLower === usernameLower) return;
+
+    const oldUsernameRef = doc(db, "usernames", oldUsernameLower);
+    const newUsernameSnapshot = await transaction.get(newUsernameRef);
+    const oldUsernameSnapshot = await transaction.get(oldUsernameRef);
+
+    if (newUsernameSnapshot.exists() && newUsernameSnapshot.data().uid !== user.uid) {
+      throw new Error("username-taken");
+    }
+
+    if (!newUsernameSnapshot.exists()) {
+      transaction.set(newUsernameRef, {
+        uid: user.uid,
+        username,
+        createdAt: serverTimestamp()
+      });
+    }
+
+    transaction.update(userRef, { username, usernameLower });
+
+    if (oldUsernameSnapshot.exists() && oldUsernameSnapshot.data().uid === user.uid) {
+      transaction.delete(oldUsernameRef);
+    }
+  });
+
+  if (user.displayName !== username) {
+    await updateProfile(user, { displayName: username });
+  }
+
+  currentUsername = username;
+  await syncUsernameInChats(user, username);
 }
 
 function getAuthError(code) {
@@ -179,9 +251,18 @@ async function saveUsername(user, rawUsername) {
 
 async function loadProfile(user) {
   const profileSnapshot = await getDoc(doc(db, "users", user.uid));
+  const preferredUsername = preferredUsernameFor(user);
 
   if (profileSnapshot.exists()) {
     currentUsername = profileSnapshot.data().username;
+
+    if (preferredUsername && normalizeUsername(currentUsername) !== preferredUsername) {
+      try {
+        await renameUsername(user, preferredUsername);
+      } catch (error) {
+        console.warn("Der bevorzugte Benutzername wird nach dem Regel-Update aktiviert.", error);
+      }
+    }
 
     if (user.displayName !== currentUsername) {
       await updateProfile(user, { displayName: currentUsername });
@@ -189,6 +270,16 @@ async function loadProfile(user) {
 
     openInbox();
     return;
+  }
+
+  if (preferredUsername) {
+    try {
+      await saveUsername(user, preferredUsername);
+      openInbox();
+      return;
+    } catch (error) {
+      if (error.message !== "username-taken") throw error;
+    }
   }
 
   if (user.displayName && isValidUsername(user.displayName)) {
