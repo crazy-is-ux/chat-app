@@ -34,7 +34,26 @@ service cloud.firestore {
           /databases/$(database)/documents/usernames/$(request.resource.data.usernameLower)
         ).data.uid == userId;
 
-      allow update, delete: if false;
+      allow update: if signedIn()
+        && request.auth.uid == userId
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'username',
+          'usernameLower'
+        ])
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.username is string
+        && request.resource.data.username.size() >= 3
+        && request.resource.data.username.size() <= 20
+        && request.resource.data.username.matches('^[A-Za-z0-9._-]+$')
+        && request.resource.data.usernameLower is string
+        && getAfter(
+          /databases/$(database)/documents/usernames/$(request.resource.data.usernameLower)
+        ).data.uid == userId
+        && getAfter(
+          /databases/$(database)/documents/usernames/$(request.resource.data.usernameLower)
+        ).data.username == request.resource.data.username;
+
+      allow delete: if false;
     }
 
     match /usernames/{usernameLower} {
@@ -59,7 +78,13 @@ service cloud.firestore {
           /databases/$(database)/documents/users/$(request.auth.uid)
         ).data.username == request.resource.data.username;
 
-      allow update, delete: if false;
+      allow update: if false;
+
+      allow delete: if signedIn()
+        && resource.data.uid == request.auth.uid
+        && getAfter(
+          /databases/$(database)/documents/users/$(request.auth.uid)
+        ).data.usernameLower != usernameLower;
     }
 
     match /chats/{chatId} {
@@ -87,19 +112,37 @@ service cloud.firestore {
 
       allow update: if signedIn()
         && request.auth.uid in resource.data.participants
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
-          'lastMessage',
-          'lastSenderId',
-          'updatedAt'
-        ])
-        && request.resource.data.participants == resource.data.participants
-        && request.resource.data.participantNames == resource.data.participantNames
-        && request.resource.data.createdAt == resource.data.createdAt
-        && request.resource.data.lastMessage is string
-        && request.resource.data.lastMessage.size() > 0
-        && request.resource.data.lastMessage.size() <= 500
-        && request.resource.data.lastSenderId == request.auth.uid
-        && request.resource.data.updatedAt == request.time;
+        && (
+          (
+            request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+              'lastMessage',
+              'lastSenderId',
+              'updatedAt'
+            ])
+            && request.resource.data.participants == resource.data.participants
+            && request.resource.data.participantNames == resource.data.participantNames
+            && request.resource.data.createdAt == resource.data.createdAt
+            && request.resource.data.lastMessage is string
+            && request.resource.data.lastMessage.size() > 0
+            && request.resource.data.lastMessage.size() <= 500
+            && request.resource.data.lastSenderId == request.auth.uid
+            && request.resource.data.updatedAt == request.time
+          )
+          ||
+          (
+            request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+              'participantNames'
+            ])
+            && request.resource.data.participantNames
+              .diff(resource.data.participantNames)
+              .affectedKeys()
+              .hasOnly([request.auth.uid])
+            && request.resource.data.participantNames[request.auth.uid]
+              == get(
+                /databases/$(database)/documents/users/$(request.auth.uid)
+              ).data.username
+          )
+        );
 
       allow delete: if false;
 
