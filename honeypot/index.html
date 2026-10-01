@@ -4,265 +4,74 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#020508">
-<title>JARVIS Security Lab</title>
-
+<title>JARVIS Network Lab v3</title>
 <style>
-*{
-  box-sizing:border-box;
-}
-
-body{
-  margin:0;
-  min-height:100vh;
-  background:
-    radial-gradient(circle at 50% 10%,#0b2534 0,#03080d 45%,#010203 100%);
-  color:#e7fbff;
-  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
-  padding:20px;
-}
-
-.card{
-  max-width:700px;
-  margin:40px auto;
-  background:#071018;
-  border:1px solid #2ee6ff;
-  border-radius:20px;
-  padding:22px;
-  box-shadow:0 0 40px rgba(46,230,255,.15);
-}
-
-h1{
-  color:#2ee6ff;
-  margin-top:0;
-}
-
-.notice{
-  border:1px solid #17404a;
-  padding:14px;
-  border-radius:12px;
-  margin:18px 0;
-  color:#bcecf4;
-  line-height:1.5;
-}
-
-.status{
-  margin:18px 0;
-  color:#2ee6ff;
-}
-
-.box{
-  padding:14px;
-  margin:10px 0;
-  border:1px solid #173640;
-  border-radius:12px;
-  background:#051018;
-  word-break:break-word;
-}
-
-.label{
-  color:#7fa4ad;
-  font-size:12px;
-  margin-bottom:6px;
-}
-
-button{
-  width:100%;
-  margin-top:12px;
-  padding:15px;
-  background:#06131a;
-  border:1px solid #2ee6ff;
-  border-radius:12px;
-  color:white;
-  font-size:16px;
-}
-
-small{
-  display:block;
-  margin-top:16px;
-  color:#7fa4ad;
-  line-height:1.5;
-}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 10%,#0b2534 0,#03080d 45%,#010203 100%);color:#e7fbff;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;padding:18px}
+.card{max-width:760px;margin:24px auto;background:#071018;border:1px solid #2ee6ff;border-radius:20px;padding:20px;box-shadow:0 0 40px rgba(46,230,255,.14)}
+h1{color:#2ee6ff;margin:0 0 6px;font-size:24px}.sub{color:#7fa4ad;font-size:13px}
+.notice{border:1px solid #17404a;padding:13px;border-radius:12px;margin:16px 0;color:#bcecf4;line-height:1.5;font-size:13px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.box{padding:13px;border:1px solid #173640;border-radius:12px;background:#051018;word-break:break-word}
+.label{color:#7fa4ad;font-size:10px;letter-spacing:.12em;margin-bottom:6px}
+button{width:100%;padding:14px;margin-top:12px;background:#06131a;border:1px solid #2ee6ff;border-radius:12px;color:#fff;font:inherit}
+@media(max-width:600px){.grid{grid-template-columns:1fr}}
 </style>
 </head>
-
 <body>
-
 <div class="card">
-
-<h1>JARVIS // SECURITY LAB</h1>
-
-<p>Honeypot Lern-Demo</p>
-
+<h1>JARVIS // NETWORK LAB v3</h1>
+<div class="sub">Freiwillige Netzwerk- und Geräteanalyse</div>
 <div class="notice">
-Diese Seite ist ein gemeinsamer Sicherheitstest.
-Sie zeigt technische Informationen des Geräts an.
-Keine Passwörter, Fotos, Kontakte oder GPS-Daten werden ausgelesen.
+Diese Seite zeigt technische Daten nur auf diesem Gerät an. IP-basierte Ortsangaben sind ungefähr.
+GPS wird ausschließlich nach einem eigenen Tipp auf „GPS freigeben“ und nach Browser-Bestätigung angezeigt.
+Es gibt keine automatische Übertragung an den Ersteller.
 </div>
-
-<div class="status" id="status">
-● Verbindung wird analysiert...
+<div class="grid">
+<div class="box"><div class="label">ÖFFENTLICHE IP</div><div id="ip">Wird geladen …</div></div>
+<div class="box"><div class="label">INTERNETANBIETER</div><div id="isp">Wird geladen …</div></div>
+<div class="box"><div class="label">ASN</div><div id="asn">Wird geladen …</div></div>
+<div class="box"><div class="label">UNGEFÄHRER ORT (IP)</div><div id="location">Wird geladen …</div></div>
+<div class="box"><div class="label">LAND</div><div id="country">Wird geladen …</div></div>
+<div class="box"><div class="label">ZEIT</div><div id="time"></div></div>
+<div class="box"><div class="label">BROWSER / GERÄT</div><div id="browser"></div></div>
+<div class="box"><div class="label">PLATTFORM</div><div id="platform"></div></div>
+<div class="box"><div class="label">SPRACHE</div><div id="language"></div></div>
+<div class="box"><div class="label">ZEITZONE</div><div id="timezone"></div></div>
+<div class="box"><div class="label">BILDSCHIRM</div><div id="screen"></div></div>
+<div class="box"><div class="label">GPS (NUR MIT ERLAUBNIS)</div><div id="gps">Nicht freigegeben</div></div>
 </div>
-
-<div class="box">
-<div class="label">ÖFFENTLICHE IP</div>
-<div id="ip">Wird geladen...</div>
+<button id="gpsBtn">GPS freigeben</button>
 </div>
-
-<div class="box">
-<div class="label">ZEIT</div>
-<div id="time"></div>
-</div>
-
-<div class="box">
-<div class="label">BROWSER / GERÄT</div>
-<div id="browser"></div>
-</div>
-
-<div class="box">
-<div class="label">SPRACHE</div>
-<div id="language"></div>
-</div>
-
-<div class="box">
-<div class="label">ZEITZONE</div>
-<div id="timezone"></div>
-</div>
-
-<div class="box">
-<div class="label">BILDSCHIRM</div>
-<div id="screen"></div>
-</div>
-
-<button onclick="shareReport()">
-Bericht teilen
-</button>
-
-<button onclick="copyReport()">
-Bericht kopieren
-</button>
-
-<small>
-Transparenter Lernmodus. Keine automatische Übertragung im Hintergrund.
-</small>
-
-</div>
-
 <script>
+const $=id=>document.getElementById(id);
+$("time").textContent=new Date().toLocaleString();
+$("browser").textContent=navigator.userAgent||"Unbekannt";
+$("platform").textContent=navigator.platform||"Unbekannt";
+$("language").textContent=navigator.language||"Unbekannt";
+$("timezone").textContent=Intl.DateTimeFormat().resolvedOptions().timeZone||"Unbekannt";
+$("screen").textContent=screen.width+" × "+screen.height;
 
-const get = id => document.getElementById(id);
-
-get("time").textContent =
-new Date().toLocaleString();
-
-get("browser").textContent =
-navigator.userAgent || "Unbekannt";
-
-get("language").textContent =
-navigator.language || "Unbekannt";
-
-get("timezone").textContent =
-Intl.DateTimeFormat().resolvedOptions().timeZone || "Unbekannt";
-
-get("screen").textContent =
-screen.width + " × " + screen.height;
-
-
-/* IP laden */
-
-fetch("https://api64.ipify.org?format=json")
-.then(response => response.json())
-.then(data => {
-
-get("ip").textContent = data.ip;
-
-get("status").textContent =
-"● Verbindung analysiert";
-
+fetch("https://ipwho.is/",{cache:"no-store"})
+.then(r=>r.json())
+.then(d=>{
+  $("ip").textContent=d.ip||"Unbekannt";
+  $("isp").textContent=d.connection&&d.connection.isp?d.connection.isp:"Unbekannt";
+  $("asn").textContent=d.connection&&d.connection.asn?"AS"+d.connection.asn:"Unbekannt";
+  $("location").textContent=[d.city,d.region].filter(Boolean).join(", ")||"Unbekannt";
+  $("country").textContent=d.country||"Unbekannt";
 })
-.catch(() => {
+.catch(()=>["ip","isp","asn","location","country"].forEach(id=>$(id).textContent="Nicht verfügbar"));
 
-get("ip").textContent =
-"Nicht verfügbar";
-
-get("status").textContent =
-"● Lokale Daten geladen";
-
-});
-
-
-function report(){
-
-return `JARVIS SECURITY LAB
-
-Öffentliche IP:
-${get("ip").textContent}
-
-Zeit:
-${get("time").textContent}
-
-Browser/Gerät:
-${get("browser").textContent}
-
-Sprache:
-${get("language").textContent}
-
-Zeitzone:
-${get("timezone").textContent}
-
-Bildschirm:
-${get("screen").textContent}`;
-
-}
-
-
-async function copyReport(){
-
-try{
-
-await navigator.clipboard.writeText(report());
-
-alert("Bericht kopiert");
-
-}
-
-catch{
-
-alert(report());
-
-}
-
-}
-
-
-async function shareReport(){
-
-if(navigator.share){
-
-try{
-
-await navigator.share({
-
-title:"JARVIS Security Lab",
-
-text:report()
-
-});
-
-}
-
-catch{}
-
-}
-
-else{
-
-copyReport();
-
-}
-
-}
-
+$("gpsBtn").onclick=()=>{
+  if(!navigator.geolocation){$("gps").textContent="Nicht unterstützt";return}
+  $("gps").textContent="Warte auf Freigabe …";
+  navigator.geolocation.getCurrentPosition(
+    p=>$("gps").textContent=p.coords.latitude.toFixed(6)+", "+p.coords.longitude.toFixed(6)+" (ca. "+Math.round(p.coords.accuracy)+" m)",
+    e=>$("gps").textContent=e.code===1?"Nicht erlaubt":"Nicht verfügbar",
+    {enableHighAccuracy:true,timeout:12000,maximumAge:0}
+  );
+};
 </script>
-
 </body>
 </html>
