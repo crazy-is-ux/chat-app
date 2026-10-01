@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#020508">
+<title>JARVIS Security Lab</title>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 50% 10%,#0b2534 0,#03080d 45%,#010203 100%);
+  color:#e7fbff;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  padding:20px;
+}
+
+.card{
+  max-width:700px;
+  margin:40px auto;
+  background:#071018;
+  border:1px solid #2ee6ff;
+  border-radius:20px;
+  padding:22px;
+  box-shadow:0 0 40px rgba(46,230,255,.15);
+}
+
+h1{
+  color:#2ee6ff;
+  margin-top:0;
+}
+
+.notice{
+  border:1px solid #17404a;
+  padding:14px;
+  border-radius:12px;
+  margin:18px 0;
+  color:#bcecf4;
+  line-height:1.5;
+}
+
+.status{
+  margin:18px 0;
+  color:#2ee6ff;
+}
+
+.box{
+  padding:14px;
+  margin:10px 0;
+  border:1px solid #173640;
+  border-radius:12px;
+  background:#051018;
+  word-break:break-word;
+}
+
+.label{
+  color:#7fa4ad;
+  font-size:12px;
+  margin-bottom:6px;
+}
+
+button{
+  width:100%;
+  margin-top:12px;
+  padding:15px;
+  background:#06131a;
+  border:1px solid #2ee6ff;
+  border-radius:12px;
+  color:white;
+  font-size:16px;
+}
+
+small{
+  display:block;
+  margin-top:16px;
+  color:#7fa4ad;
+  line-height:1.5;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<h1>JARVIS // SECURITY LAB</h1>
+
+<p>Honeypot Lern-Demo</p>
+
+<div class="notice">
+Diese Seite ist ein gemeinsamer Sicherheitstest.
+Sie zeigt technische Informationen des Geräts an.
+Keine Passwörter, Fotos, Kontakte oder GPS-Daten werden ausgelesen.
+</div>
+
+<div class="status" id="status">
+● Verbindung wird analysiert...
+</div>
+
+<div class="box">
+<div class="label">ÖFFENTLICHE IP</div>
+<div id="ip">Wird geladen...</div>
+</div>
+
+<div class="box">
+<div class="label">ZEIT</div>
+<div id="time"></div>
+</div>
+
+<div class="box">
+<div class="label">BROWSER / GERÄT</div>
+<div id="browser"></div>
+</div>
+
+<div class="box">
+<div class="label">SPRACHE</div>
+<div id="language"></div>
+</div>
+
+<div class="box">
+<div class="label">ZEITZONE</div>
+<div id="timezone"></div>
+</div>
+
+<div class="box">
+<div class="label">BILDSCHIRM</div>
+<div id="screen"></div>
+</div>
+
+<button onclick="shareReport()">
+Bericht teilen
+</button>
+
+<button onclick="copyReport()">
+Bericht kopieren
+</button>
+
+<small>
+Transparenter Lernmodus. Keine automatische Übertragung im Hintergrund.
+</small>
+
+</div>
+
+<script>
+
+const get = id => document.getElementById(id);
+
+get("time").textContent =
+new Date().toLocaleString();
+
+get("browser").textContent =
+navigator.userAgent || "Unbekannt";
+
+get("language").textContent =
+navigator.language || "Unbekannt";
+
+get("timezone").textContent =
+Intl.DateTimeFormat().resolvedOptions().timeZone || "Unbekannt";
+
+get("screen").textContent =
+screen.width + " × " + screen.height;
+
+
+/* IP laden */
+
+fetch("https://api64.ipify.org?format=json")
+.then(response => response.json())
+.then(data => {
+
+get("ip").textContent = data.ip;
+
+get("status").textContent =
+"● Verbindung analysiert";
+
+})
+.catch(() => {
+
+get("ip").textContent =
+"Nicht verfügbar";
+
+get("status").textContent =
+"● Lokale Daten geladen";
+
+});
+
+
+function report(){
+
+return `JARVIS SECURITY LAB
+
+Öffentliche IP:
+${get("ip").textContent}
+
+Zeit:
+${get("time").textContent}
+
+Browser/Gerät:
+${get("browser").textContent}
+
+Sprache:
+${get("language").textContent}
+
+Zeitzone:
+${get("timezone").textContent}
+
+Bildschirm:
+${get("screen").textContent}`;
+
+}
+
+
+async function copyReport(){
+
+try{
+
+await navigator.clipboard.writeText(report());
+
+alert("Bericht kopiert");
+
+}
+
+catch{
+
+alert(report());
+
+}
+
+}
+
+
+async function shareReport(){
+
+if(navigator.share){
+
+try{
+
+await navigator.share({
+
+title:"JARVIS Security Lab",
+
+text:report()
+
+});
+
+}
+
+catch{}
+
+}
+
+else{
+
+copyReport();
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
