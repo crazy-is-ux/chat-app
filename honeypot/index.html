@@ -4,74 +4,241 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#020508">
-<title>JARVIS Network Lab v3</title>
+<title>JARVIS Security Lab v4</title>
 <style>
+:root{
+  --bg:#020509;--panel:#071018;--panel2:#09151f;--line:#28e7ff;--text:#eaffff;
+  --muted:#7ea5ad;--ok:#78ffd9;--warn:#ffd36a;
+}
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 10%,#0b2534 0,#03080d 45%,#010203 100%);color:#e7fbff;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;padding:18px}
-.card{max-width:760px;margin:24px auto;background:#071018;border:1px solid #2ee6ff;border-radius:20px;padding:20px;box-shadow:0 0 40px rgba(46,230,255,.14)}
-h1{color:#2ee6ff;margin:0 0 6px;font-size:24px}.sub{color:#7fa4ad;font-size:13px}
-.notice{border:1px solid #17404a;padding:13px;border-radius:12px;margin:16px 0;color:#bcecf4;line-height:1.5;font-size:13px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.box{padding:13px;border:1px solid #173640;border-radius:12px;background:#051018;word-break:break-word}
-.label{color:#7fa4ad;font-size:10px;letter-spacing:.12em;margin-bottom:6px}
-button{width:100%;padding:14px;margin-top:12px;background:#06131a;border:1px solid #2ee6ff;border-radius:12px;color:#fff;font:inherit}
-@media(max-width:600px){.grid{grid-template-columns:1fr}}
+html,body{margin:0;min-height:100%;background:
+radial-gradient(circle at 50% 0%,#0a2a3d 0,#03080d 42%,#010203 100%);
+color:var(--text);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+body{padding:16px}
+.shell{max-width:820px;margin:0 auto}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:8px 0 12px}
+.brand{letter-spacing:.24em;color:var(--line);font-size:12px}
+.badge{border:1px solid #174650;background:#061117;border-radius:999px;padding:6px 10px;font-size:11px;color:var(--ok)}
+.card{background:rgba(7,16,24,.96);border:1px solid rgba(40,231,255,.55);border-radius:20px;padding:18px;box-shadow:0 0 42px rgba(40,231,255,.12)}
+.hero{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center}
+h1{margin:0;color:var(--line);font-size:24px}
+.sub{margin-top:6px;color:var(--muted);font-size:12px;line-height:1.5}
+.scanring{width:78px;height:78px;border-radius:50%;border:1px solid #1b6672;position:relative;display:grid;place-items:center;overflow:hidden}
+.scanring:before{content:"";position:absolute;width:100%;height:2px;background:linear-gradient(90deg,transparent,var(--line),transparent);animation:scan 1.8s linear infinite}
+.scanring span{font-size:11px;color:var(--line)}
+@keyframes scan{0%{transform:translateY(-38px)}100%{transform:translateY(38px)}}
+.notice{margin:16px 0;padding:12px;border:1px solid #17404a;background:#061017;border-radius:12px;color:#c8f4fa;font-size:12px;line-height:1.5}
+.statusrow{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.pill{border:1px solid #173640;background:#051018;border-radius:999px;padding:7px 10px;font-size:11px;color:#bdeff5}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.panel{background:var(--panel2);border:1px solid #173640;border-radius:14px;padding:12px;min-height:72px}
+.label{font-size:9px;letter-spacing:.13em;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
+.value{font-size:13px;word-break:break-word;line-height:1.4}
+.section{margin-top:16px}
+.sectiontitle{font-size:11px;letter-spacing:.14em;color:var(--line);margin-bottom:8px}
+.log{background:#03080d;border:1px solid #14313a;border-radius:14px;padding:12px;max-height:210px;overflow:auto}
+.logline{font-size:11px;line-height:1.6;color:#bfeff5;border-bottom:1px solid rgba(255,255,255,.035);padding:3px 0}
+.logtime{color:#628892;margin-right:8px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+button{appearance:none;border:1px solid var(--line);background:#06131a;color:#fff;padding:13px;border-radius:12px;font:inherit;font-size:13px}
+button.secondary{border-color:#24444c;color:#b8dbe0}
+button:active{transform:scale(.99)}
+footer{margin:14px 2px 0;color:var(--muted);font-size:10px;line-height:1.5}
+@media(max-width:620px){.grid,.actions{grid-template-columns:1fr}.hero{grid-template-columns:1fr}.scanring{display:none}h1{font-size:21px}}
 </style>
 </head>
 <body>
-<div class="card">
-<h1>JARVIS // NETWORK LAB v3</h1>
-<div class="sub">Freiwillige Netzwerk- und Geräteanalyse</div>
-<div class="notice">
-Diese Seite zeigt technische Daten nur auf diesem Gerät an. IP-basierte Ortsangaben sind ungefähr.
-GPS wird ausschließlich nach einem eigenen Tipp auf „GPS freigeben“ und nach Browser-Bestätigung angezeigt.
-Es gibt keine automatische Übertragung an den Ersteller.
+<div class="shell">
+  <div class="topbar">
+    <div class="brand">JARVIS // SECURITY LAB v4</div>
+    <div class="badge">TEST MODE</div>
+  </div>
+
+  <div class="card">
+    <div class="hero">
+      <div>
+        <h1>Network Diagnostics</h1>
+        <div class="sub">Live-Diagnose von Browser-, Netzwerk- und Gerätedaten für euren freiwilligen Security-Test.</div>
+      </div>
+      <div class="scanring"><span>SCANNING</span></div>
+    </div>
+
+    <div class="notice">
+      Transparenter Lernmodus: technische Daten werden nur auf diesem Gerät angezeigt. GPS wird ausschließlich
+      nach einem eigenen Tipp auf „GPS freigeben“ und nach Browser-Bestätigung ausgelesen. Es gibt keine
+      automatische Übertragung an den Ersteller.
+    </div>
+
+    <div class="statusrow">
+      <div class="pill">Session: <span id="session"></span></div>
+      <div class="pill">Status: <span id="status">Initialisiere …</span></div>
+      <div class="pill">Online: <span id="online"></span></div>
+    </div>
+
+    <div class="grid">
+      <div class="panel"><div class="label">Öffentliche IP</div><div class="value" id="ip">Wird geladen …</div></div>
+      <div class="panel"><div class="label">Internetanbieter</div><div class="value" id="isp">Wird geladen …</div></div>
+      <div class="panel"><div class="label">ASN</div><div class="value" id="asn">Wird geladen …</div></div>
+      <div class="panel"><div class="label">Ungefährer Ort (IP)</div><div class="value" id="location">Wird geladen …</div></div>
+      <div class="panel"><div class="label">Land</div><div class="value" id="country">Wird geladen …</div></div>
+      <div class="panel"><div class="label">Zeit</div><div class="value" id="time"></div></div>
+      <div class="panel"><div class="label">Browser / Gerät</div><div class="value" id="browser"></div></div>
+      <div class="panel"><div class="label">Plattform</div><div class="value" id="platform"></div></div>
+      <div class="panel"><div class="label">Sprache</div><div class="value" id="language"></div></div>
+      <div class="panel"><div class="label">Zeitzone</div><div class="value" id="timezone"></div></div>
+      <div class="panel"><div class="label">Bildschirm</div><div class="value" id="screen"></div></div>
+      <div class="panel"><div class="label">Verbindung</div><div class="value" id="connection">Prüfe …</div></div>
+      <div class="panel"><div class="label">GPS (nur mit Erlaubnis)</div><div class="value" id="gps">Nicht freigegeben</div></div>
+      <div class="panel"><div class="label">User-Agent Länge</div><div class="value" id="ualen"></div></div>
+    </div>
+
+    <div class="section">
+      <div class="sectiontitle">EVENT LOG</div>
+      <div class="log" id="log"></div>
+    </div>
+
+    <div class="actions">
+      <button id="gpsBtn">GPS freigeben</button>
+      <button id="shareBtn">Bericht teilen</button>
+      <button id="copyBtn">Bericht kopieren</button>
+      <button class="secondary" id="refreshBtn">Neu analysieren</button>
+    </div>
+
+    <footer>
+      IP-basierte Ortsangaben sind nur ungefähr und können durch Mobilfunk, VPN oder Provider-Routing abweichen.
+      GPS benötigt immer eine Browser-Freigabe durch die Person am Gerät.
+    </footer>
+  </div>
 </div>
-<div class="grid">
-<div class="box"><div class="label">ÖFFENTLICHE IP</div><div id="ip">Wird geladen …</div></div>
-<div class="box"><div class="label">INTERNETANBIETER</div><div id="isp">Wird geladen …</div></div>
-<div class="box"><div class="label">ASN</div><div id="asn">Wird geladen …</div></div>
-<div class="box"><div class="label">UNGEFÄHRER ORT (IP)</div><div id="location">Wird geladen …</div></div>
-<div class="box"><div class="label">LAND</div><div id="country">Wird geladen …</div></div>
-<div class="box"><div class="label">ZEIT</div><div id="time"></div></div>
-<div class="box"><div class="label">BROWSER / GERÄT</div><div id="browser"></div></div>
-<div class="box"><div class="label">PLATTFORM</div><div id="platform"></div></div>
-<div class="box"><div class="label">SPRACHE</div><div id="language"></div></div>
-<div class="box"><div class="label">ZEITZONE</div><div id="timezone"></div></div>
-<div class="box"><div class="label">BILDSCHIRM</div><div id="screen"></div></div>
-<div class="box"><div class="label">GPS (NUR MIT ERLAUBNIS)</div><div id="gps">Nicht freigegeben</div></div>
-</div>
-<button id="gpsBtn">GPS freigeben</button>
-</div>
+
 <script>
-const $=id=>document.getElementById(id);
-$("time").textContent=new Date().toLocaleString();
-$("browser").textContent=navigator.userAgent||"Unbekannt";
-$("platform").textContent=navigator.platform||"Unbekannt";
-$("language").textContent=navigator.language||"Unbekannt";
-$("timezone").textContent=Intl.DateTimeFormat().resolvedOptions().timeZone||"Unbekannt";
-$("screen").textContent=screen.width+" × "+screen.height;
+const $ = id => document.getElementById(id);
 
-fetch("https://ipwho.is/",{cache:"no-store"})
-.then(r=>r.json())
-.then(d=>{
-  $("ip").textContent=d.ip||"Unbekannt";
-  $("isp").textContent=d.connection&&d.connection.isp?d.connection.isp:"Unbekannt";
-  $("asn").textContent=d.connection&&d.connection.asn?"AS"+d.connection.asn:"Unbekannt";
-  $("location").textContent=[d.city,d.region].filter(Boolean).join(", ")||"Unbekannt";
-  $("country").textContent=d.country||"Unbekannt";
-})
-.catch(()=>["ip","isp","asn","location","country"].forEach(id=>$(id).textContent="Nicht verfügbar"));
+function now(){
+  return new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit",second:"2-digit"});
+}
+function log(msg){
+  const row=document.createElement("div");
+  row.className="logline";
+  row.innerHTML='<span class="logtime">['+now()+']</span>'+msg;
+  $("log").prepend(row);
+}
+function makeSession(){
+  const a=new Uint32Array(2);
+  crypto.getRandomValues(a);
+  return "JRV-"+a[0].toString(16).slice(-4).toUpperCase()+"-"+a[1].toString(16).slice(-4).toUpperCase();
+}
+function fillLocal(){
+  $("session").textContent = sessionStorage.jarvisSession || (sessionStorage.jarvisSession=makeSession());
+  $("time").textContent = new Date().toLocaleString();
+  $("browser").textContent = navigator.userAgent || "Unbekannt";
+  $("platform").textContent = navigator.platform || "Unbekannt";
+  $("language").textContent = navigator.language || "Unbekannt";
+  $("timezone").textContent = Intl.DateTimeFormat().resolvedOptions().timeZone || "Unbekannt";
+  $("screen").textContent = screen.width+" × "+screen.height+" CSS-Pixel";
+  $("online").textContent = navigator.onLine ? "Ja" : "Nein";
+  $("ualen").textContent = (navigator.userAgent || "").length+" Zeichen";
 
-$("gpsBtn").onclick=()=>{
-  if(!navigator.geolocation){$("gps").textContent="Nicht unterstützt";return}
+  const c=navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  if(c){
+    const parts=[];
+    if(c.effectiveType) parts.push("Typ "+c.effectiveType);
+    if(typeof c.downlink==="number") parts.push(c.downlink+" Mbit/s");
+    if(typeof c.rtt==="number") parts.push("RTT "+c.rtt+" ms");
+    $("connection").textContent=parts.join(" · ") || "Daten vorhanden";
+  }else{
+    $("connection").textContent="Vom Browser nicht freigegeben";
+  }
+}
+
+async function loadNetwork(){
+  $("status").textContent="Analysiere …";
+  log("Netzwerkdiagnose gestartet");
+  ["ip","isp","asn","location","country"].forEach(id=>$(id).textContent="Wird geladen …");
+  try{
+    const r=await fetch("https://ipwho.is/",{cache:"no-store"});
+    if(!r.ok) throw new Error("HTTP "+r.status);
+    const d=await r.json();
+    if(d.success===false) throw new Error("API-Fehler");
+    $("ip").textContent=d.ip||"Unbekannt";
+    $("isp").textContent=d.connection?.isp||"Unbekannt";
+    $("asn").textContent=d.connection?.asn?"AS"+d.connection.asn:"Unbekannt";
+    $("location").textContent=[d.city,d.region].filter(Boolean).join(", ")||"Unbekannt";
+    $("country").textContent=d.country||"Unbekannt";
+    $("status").textContent="Fertig";
+    log("Öffentliche Netzwerkdaten geladen");
+  }catch(e){
+    ["ip","isp","asn","location","country"].forEach(id=>$(id).textContent="Nicht verfügbar");
+    $("status").textContent="Teilweise geladen";
+    log("IP-Dienst nicht erreichbar");
+  }
+}
+
+function requestGPS(){
+  if(!navigator.geolocation){
+    $("gps").textContent="Nicht unterstützt";
+    log("GPS wird vom Browser nicht unterstützt");
+    return;
+  }
   $("gps").textContent="Warte auf Freigabe …";
+  log("GPS-Freigabe angefordert");
   navigator.geolocation.getCurrentPosition(
-    p=>$("gps").textContent=p.coords.latitude.toFixed(6)+", "+p.coords.longitude.toFixed(6)+" (ca. "+Math.round(p.coords.accuracy)+" m)",
-    e=>$("gps").textContent=e.code===1?"Nicht erlaubt":"Nicht verfügbar",
+    p=>{
+      $("gps").textContent=p.coords.latitude.toFixed(6)+", "+p.coords.longitude.toFixed(6)+" (ca. "+Math.round(p.coords.accuracy)+" m)";
+      log("GPS nach Zustimmung verfügbar");
+    },
+    e=>{
+      $("gps").textContent=e.code===1?"Nicht erlaubt":"Nicht verfügbar";
+      log(e.code===1?"GPS-Freigabe abgelehnt":"GPS konnte nicht ermittelt werden");
+    },
     {enableHighAccuracy:true,timeout:12000,maximumAge:0}
   );
-};
+}
+
+function report(){
+return `JARVIS SECURITY LAB v4
+Session: ${$("session").textContent}
+Öffentliche IP: ${$("ip").textContent}
+Internetanbieter: ${$("isp").textContent}
+ASN: ${$("asn").textContent}
+Ungefährer Ort (IP): ${$("location").textContent}
+Land: ${$("country").textContent}
+Zeit: ${$("time").textContent}
+Browser/Gerät: ${$("browser").textContent}
+Plattform: ${$("platform").textContent}
+Sprache: ${$("language").textContent}
+Zeitzone: ${$("timezone").textContent}
+Bildschirm: ${$("screen").textContent}
+Verbindung: ${$("connection").textContent}
+GPS: ${$("gps").textContent}`;
+}
+
+async function copyReport(){
+  try{
+    await navigator.clipboard.writeText(report());
+    log("Bericht in Zwischenablage kopiert");
+    const old=$("copyBtn").textContent;
+    $("copyBtn").textContent="✅ Kopiert";
+    setTimeout(()=>$("copyBtn").textContent=old,1400);
+  }catch(e){alert(report())}
+}
+async function shareReport(){
+  if(navigator.share){
+    try{await navigator.share({title:"JARVIS Security Lab",text:report()});log("Teilen-Menü geöffnet")}catch(e){}
+  }else{copyReport()}
+}
+
+$("gpsBtn").onclick=requestGPS;
+$("shareBtn").onclick=shareReport;
+$("copyBtn").onclick=copyReport;
+$("refreshBtn").onclick=()=>{fillLocal();loadNetwork();log("Analyse manuell neu gestartet")};
+window.addEventListener("online",()=>{fillLocal();log("Gerät wieder online")});
+window.addEventListener("offline",()=>{fillLocal();log("Gerät offline")});
+
+fillLocal();
+log("Session initialisiert");
+log("Lokale Browserdaten geladen");
+loadNetwork();
 </script>
 </body>
 </html>
